@@ -1,4 +1,4 @@
-export default [
+const exportDefault = [
     {
       preview:
         'https://cdn.pixabay.com/photo/2019/05/14/16/43/himilayan-blue-poppy-4202825__340.jpg',
@@ -64,4 +64,56 @@ export default [
     },
   ];
 
-  
+const galleryEl = document.querySelector('.js-gallery') 
+
+const picturesMarkup = createPicturesMarkup(exportDefault)
+galleryEl.insertAdjacentHTML('beforeend', picturesMarkup)
+
+function createPicturesMarkup(exportDefault) {
+  return exportDefault.map(({preview, original, description}) => {
+    return `<li class="gallery__item">
+    <a
+      class="gallery__link"
+     href="${original}"
+    >
+      <img
+        class="gallery__image"
+        src="${preview}"
+        data-source="${original}"
+        alt="${description}"
+      />
+    </a>
+  </li>`
+  }).join('');
+}
+
+const modalEl = document.querySelector('.js-lightbox')
+const modalImg = document.querySelector('.lightbox__image')
+const btnCloseEl = document.querySelector('button[data-action="close-lightbox"]')
+const overlayEl = document.querySelector('.lightbox__overlay')
+const bodyEl = document.querySelector('body')
+
+galleryEl.addEventListener('click', onPictureClick)
+
+function onPictureClick(event) {
+  modalEl.classList.add('is-open')
+  bodyEl.classList.add('modal-open')
+  modalImg.src = event.target.dataset.source
+  event.preventDefault()
+}
+
+btnCloseEl.addEventListener('click', closeModal)
+overlayEl.addEventListener('click', closeModal)
+window.addEventListener('keydown', onEscKeydown)
+
+function closeModal(event) {
+  modalEl.classList.remove('is-open')
+  bodyEl.classList.remove('modal-open')
+  modalImg.src = ''
+}
+
+function onEscKeydown(event) {
+  if (event.code === 'Escape') {
+    closeModal()
+  }
+}
